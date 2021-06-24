@@ -1,0 +1,63 @@
+// if (command === 'ping') {
+	// 	msg.reply('Pong!');
+	// }
+	// else if (command === 'sayabtuday') {
+	// 	msg.reply('Ah he is a Dumass');
+	// }
+	// else if (command === 'beep') {
+	// 	msg.channel.send('Boop.');
+	// }
+	// else if (command === 'serverinfo') {
+	// 	msg.channel.send(`This server's name is: ${msg.guild.name}\nTotal members: ${msg.guild.memberCount}\n Server Created on: ${msg.guild.createdAt}\n Server Region: ${msg.guild.region}`);
+	// }
+	// else if (command === 'userinfo') {
+	// 	msg.channel.send(`Your username: ${msg.author.username}\nYour ID: ${msg.author.id}`);
+	// }
+	// else if (command === 'argsinfo') {
+	// 	if (!args.length) {
+	// 		return msg.channel.send(`You didn't provide any arguments, ${msg.author}!`);
+	// 	}
+	// 	msg.channel.send(`Command name: ${command}\nArguments: ${args}`);
+	// }
+	// else if (command === 'kick') {
+	// 	if (!msg.mentions.users.size) {
+	// 		return msg.reply('you need to tag a user in order to kick them!');
+	// 	}
+	// 	const taggedUser = msg.mentions.users.first();
+	// 	msg.channel.send(`You wanted to kick: ${taggedUser.username}`);
+	// }
+	// else if (command === 'avatar') {
+	// 	if (!msg.mentions.users.size) {
+	// 		// return msg.channel.send(`Your avatar: <${msg.author.displayAvatarURL({ format: 'png', dynamic: true })}>`);
+	// 		const avUrl = msg.author.displayAvatarURL({ format: 'png', dynamic: true });
+	// 		const embed = new Discord.MessageEmbed()
+	// 			.setTitle(`${msg.author.username} 's profile: `)
+	// 			.setColor(12118406)
+	// 			.setImage(avUrl);
+	// 		return msg.channel.send({ embed });
+	// 	}
+
+	// 	const avatarList = msg.mentions.users.map(user => {
+	// 		// return `${user.username}'s avatar: <${user.displayAvatarURL({ format: 'png', dynamic: true })}>`;
+	// 		const avUrl = user.displayAvatarURL({ format: 'png', dynamic: true });
+	// 		const embed = new Discord.MessageEmbed()
+	// 			.setTitle(`${user.username} 's profile: `)
+	// 			.setColor(12118406)
+	// 			.setImage(avUrl);
+	// 		msg.channel.send({ embed });
+	// 	});
+	// 	// msg.channel.send(avatarList);
+	// }
+	// else if (command === 'purge') {
+	// 	const amount = parseInt(args[0]);
+	// 	if (isNaN(amount)) {
+	// 		return msg.reply('that doesn\'t seem to be a valid number.');
+	// 	}
+	// 	else if (amount < 2 || amount > 100) {
+	// 		return msg.reply('you need to input a number between 2 and 100.');
+	// 	}
+	// 	msg.channel.bulkDelete(amount + 1, true).catch(err => {
+	// 		console.error(err);
+	// 		msg.channel.send('there was an error trying to prune messages in this channel!');
+	// 	});
+	// }
