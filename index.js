@@ -2,6 +2,8 @@ const Discord = require('discord.js');
 const fs = require('fs');
 const dotenv = require('dotenv');
 const db = require('quick.db');
+const ascii = require('ascii-table');
+
 dotenv.config();
 
 const client = new Discord.Client();
@@ -14,16 +16,31 @@ const commandFolders = fs.readdirSync('./commands');
 const myPrefix = '#';
 const mySecret = process.env.TOKEN;
 
+const table = new ascii('Commands');
+table.setHeading('Command', ' Load status');
+
+/**
+ * Loading commands directory
+ * */
+
 for (const folder of commandFolders) {
 	const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
 		const command = require(`./commands/${folder}/${file}`);
-		client.commands.set(command.name, command);
+		if(command.name) {
+			client.commands.set(command.name, command);
+			table.addRow(file, '✔');
+		}
+		else {
+			table.addRow(file, '❌ -> Missing a help.name, or help.name is not a string.');
+			continue;
+		}
 	}
 }
 
 client.once('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`);
+	console.log(table.toString());
 });
 
 client.on('guildMemberAdd', (member) => {
@@ -42,9 +59,9 @@ client.on('message', async msg => {
 	const args = msg.content.slice(myPrefix.length).trim().split(/ +/);
 	const commandName = args.shift().toLowerCase();
 
-	// if (!client.commands.has(commandName)) return;
-	// const command = client.commands.get(commandName);
-
+	/**
+	 * AFK START
+	 */
 	if(db.has(`AFK-${msg.author.id}+${msg.guild.id}`)) {
 		// const info = db.get(`AFK-${msg.author.id}+${msg.guild.id}`);
 		await db.delete(`AFK-${msg.author.id}+${msg.guild.id}`);
@@ -56,17 +73,30 @@ client.on('message', async msg => {
 			msg.channel.send(msg.mentions.members.first().user.tag + ':' + db.get(`AFK-${msg.mentions.members.first().id}+${msg.guild.id}`));
 		}
 	}
+	/**
+	 * AFK END
+	 */
+
 	if (!msg.content.startsWith(myPrefix) || msg.author.bot) return;
 
+	/**
+	 * Aliases
+	 */
 	const command = client.commands.get(commandName)
 		|| client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
 
 	if (!command) return;
 
+	/**
+	 * GuildOnly and DM's
+	 */
 	if (command.guildOnly && msg.channel.type === 'dm') {
 		return msg.reply('I can\'t execute that command inside DMs!');
 	}
 
+	/**
+	 * Check Permissions
+	 */
 	if (command.permissions) {
 		const authorPerms = msg.channel.permissionsFor(msg.author);
 		if (!authorPerms || !authorPerms.has(command.permissions)) {
@@ -74,6 +104,9 @@ client.on('message', async msg => {
 		}
 	}
 
+	/**
+	 * Check for arguments
+	 */
 	if (command.args && !args.length) {
 		let reply = `You didn't provide any arguments, ${msg.author}!`;
 
@@ -84,6 +117,9 @@ client.on('message', async msg => {
 		return msg.channel.send(reply);
 	}
 
+	/**
+	 * Cooldowns starts
+	 */
 	const { cooldowns } = client;
 
 	if (!cooldowns.has(command.name)) {
@@ -105,6 +141,10 @@ client.on('message', async msg => {
 
 	timestamps.set(msg.author.id, now);
 	setTimeout(() => timestamps.delete(msg.author.id), cooldownAmount);
+
+	/**
+	 * Cooldowns end
+	 */
 
 	try {
 		command.run(client, msg, args);
